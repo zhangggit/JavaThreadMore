@@ -1,0 +1,127 @@
+package com.example.zhanggang.javathread;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "TAG";
+    private Date date1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
+    }
+
+    public void onClick_thread(View view) throws ExecutionException, InterruptedException {
+        switch (view.getId()) {
+            case R.id.thread_main:   //继承Thread方式
+                MyThread myThread1 = new MyThread("A");
+                MyThread myThread2 = new MyThread("B");
+                myThread1.start();
+                myThread2.start();
+                break;
+            case R.id.runnable_main:  //实现Runnable接口方式
+                Thread thread = new Thread(new MyThread2("C"));
+                Thread thread2 = new Thread(new MyThread2("D"));
+                thread.start();
+                thread2.start();
+                break;
+            case R.id.executorservice_main:  //executorservice回调方式
+                System.out.println("----程序开始运行----");
+                date1 = new Date();
+                int taskSize = 5;
+                // 创建一个线程池
+                ExecutorService pool = Executors.newFixedThreadPool(taskSize);
+                // 创建多个有返回值的任务
+                List<Future> list = new ArrayList<Future>();
+                for (int i = 0; i < taskSize; i++) {
+                    Callable c = new MyCallable(i + " ");
+                    // 执行任务并获取Future对象
+                    Future f = pool.submit(c);
+                    // System.out.println(">>>" + f.get().toString());
+                    list.add(f);
+                }
+                // 关闭线程池
+                pool.shutdown();
+
+                // 获取所有并发任务的运行结果
+                for (Future f : list) {
+                    // 从Future对象上获取任务的返回值，并输出到控制台
+                    System.out.println(">>>" + f.get().toString());
+                }
+                Date date2 = new Date();
+                System.out.println("----程序结束运行----，程序运行时间【"
+                        + (date2.getTime() - date1.getTime()) + "毫秒】");
+                break;
+        }
+
+    }
+
+    class MyCallable implements Callable<Object> {
+        private String taskNum;
+
+        MyCallable(String taskNum) {
+            this.taskNum = taskNum;
+        }
+
+        public Object call() throws Exception {
+            System.out.println(">>>" + taskNum + "任务启动");
+            Date dateTmp1 = new Date();
+            Thread.sleep(1000);
+            Date dateTmp2 = new Date();
+            long time = dateTmp2.getTime() - dateTmp1.getTime();
+            System.out.println(">>>" + taskNum + "任务终止");
+            return taskNum + "任务返回运行结果,当前任务时间【" + time + "毫秒】";
+        }
+    }
+
+    //Thread
+    public class MyThread extends Thread {
+        private String name;
+
+        public MyThread(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            for (int i = 0; i < 10; i++) {
+                Log.e(TAG, "MyThread run: " + name + i);
+            }
+        }
+    }
+
+    //Runnable
+    public class MyThread2 implements Runnable {
+        private String name;
+
+        public MyThread2(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public void run() {
+            for (int i = 0; i < 5; i++) {
+                Log.e(TAG, "MyThread run: " + name + i);
+            }
+        }
+    }
+
+
+}

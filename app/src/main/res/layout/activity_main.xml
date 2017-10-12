@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.zhanggang.javathread.MainActivity">
+
+    <Button
+        android:id="@+id/thread_main"
+        android:onClick="onClick_thread"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Thread" />
+    <Button
+        android:id="@+id/runnable_main"
+        android:onClick="onClick_thread"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Runnable" />
+    <Button
+        android:id="@+id/executorservice_main"
+        android:onClick="onClick_thread"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="ExecutorService" />
+
+</LinearLayout>
